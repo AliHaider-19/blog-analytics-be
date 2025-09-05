@@ -12,7 +12,7 @@ const createBlogSchema = Joi.object({
 
 const updateBlogSchema = Joi.object({
   title: Joi.string().min(5).max(200).optional(),
-  content: Joi.string().min(20).optional(),
+  content: Joi.string().min(10).optional(),
   author: Joi.string().min(2).max(20).optional(),
   tags: Joi.array().items(Joi.string().min(1).max(30)).max(10).optional(),
   category: Joi.string().min(2).max(20).optional(),
