@@ -33,7 +33,9 @@ app.use(limiter);
 // CORS
 app.use(
   cors({
-    origin: "https://blog-analytics-fe.vercel.app/",
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
