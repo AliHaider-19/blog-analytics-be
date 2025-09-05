@@ -155,26 +155,38 @@ const getBlog = async (req, res) => {
     });
   }
 };
-
 const updateBlog = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
+    const userId = req.user.id; // Get user ID from auth middleware
 
-    // Add updatedAt timestamp
-    updateData.updatedAt = new Date();
+    // First, find the blog to check ownership
+    const existingBlog = await Blog.findById(id);
 
-    const blog = await Blog.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!blog) {
+    if (!existingBlog) {
       return res.status(404).json({
         success: false,
         message: "Blog not found",
       });
     }
+
+    // Check if the authenticated user is the author of the blog
+    // if (existingBlog.author.toString() !== userId.toString()) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "You are not authorized to update this blog post",
+    //   });
+    // }
+
+    // Add updatedAt timestamp
+    updateData.updatedAt = new Date();
+
+    // Update the blog
+    const blog = await Blog.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    }).populate("author", "username name email");
 
     res.json({
       success: true,
@@ -193,15 +205,28 @@ const updateBlog = async (req, res) => {
 const deleteBlog = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id; // Get user ID from auth middleware
 
-    const blog = await Blog.findByIdAndDelete(id);
+    // First, find the blog to check ownership
+    const existingBlog = await Blog.findById(id);
 
-    if (!blog) {
+    if (!existingBlog) {
       return res.status(404).json({
         success: false,
         message: "Blog not found",
       });
     }
+
+    // // Check if the authenticated user is the author of the blog
+    // if (existingBlog.author.toString() !== userId.toString()) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "You are not authorized to delete this blog post",
+    //   });
+    // }
+
+    // Delete the blog
+    const blog = await Blog.findByIdAndDelete(id);
 
     res.json({
       success: true,
