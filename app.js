@@ -20,20 +20,20 @@ connectDB();
 app.use(helmet());
 
 // Rate limiting
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 50,
-//   message: {
-//     success: false,
-//     message: "Too many requests, please try again later.",
-//   },
-// });
-// app.use(limiter);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  message: {
+    success: false,
+    message: "Too many requests, please try again later.",
+  },
+});
+app.use(limiter);
 
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://blog-analytics-fe.vercel.app/",
   })
 );
 
