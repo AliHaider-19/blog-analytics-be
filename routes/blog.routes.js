@@ -1,6 +1,7 @@
 const express = require("express");
 const blogController = require("../controllers/blogController");
 const auth = require("../middleware/auth");
+const checkBlogOwnership = require("../middleware/blogOwnership.js"); // Add this
 const {
   createBlogSchema,
   updateBlogSchema,
@@ -22,18 +23,21 @@ router.get(
 
 router.get("/:id", validate(blogIdSchema, "params"), blogController.getBlog);
 
+// Updated routes with ownership middleware
 router.put(
   "/:id",
   auth,
+  // validate(blogIdSchema, "params"),
+  checkBlogOwnership, // Add ownership check
   validate(updateBlogSchema, "body"),
-  validate(blogIdSchema, "params"),
   blogController.updateBlog
 );
 
 router.delete(
   "/:id",
   auth,
-  validate(blogIdSchema, "params"),
+  // validate(blogIdSchema, "params"),
+  checkBlogOwnership, // Add ownership check
   blogController.deleteBlog
 );
 
